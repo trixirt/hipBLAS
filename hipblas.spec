@@ -14,6 +14,9 @@
 # export QA_RPATHS=0xff
 %bcond_with test
 
+# gfortran and clang rpm macros do not mix
+%global build_fflags %{nil}
+
 Name:           hipblas
 Version:        %{rocm_version}
 Release:        1%{?dist}
@@ -36,9 +39,12 @@ BuildRequires:  rocm-hip-devel
 BuildRequires:  rocm-runtime-devel
 BuildRequires:  rocm-rpm-macros
 BuildRequires:  rocm-rpm-macros-modules
-BuildRequires:  rocsolver-devel
 
 %if %{with test}
+
+# test parallel building broken
+%global _smp_mflags -j1
+
 BuildRequires:  gtest-devel
 BuildRequires:  blas-devel
 BuildRequires:  libomp-devel
@@ -85,10 +91,10 @@ for gpu in %{rocm_gpu_list}
 do
     module load rocm/$gpu
     %cmake %rocm_cmake_options \
+           -DBUILD_WITH_SOLVER=OFF \
 %if %{with test}
            %rocm_cmake_test_options \
 %endif
-           -DBUILD_WITH_TENSILE=OFF
 
     %cmake_build
     module purge
@@ -124,28 +130,5 @@ done
 %endif
 
 %changelog
-* Sun Oct 22 2023 Tom Rix <trix@redhat.com> - 5.7.1-3
-- Change url
-- capitalize AMD
-
-* Sat Oct 21 2023 Tom Rix <trix@redhat.com> - 5.7.1-2
-- Fix so location
-- glob gpu family location
-
-* Sun Oct 15 2023 Tom Rix <trix@redhat.com> - 5.7.1-1
-- Update to 5.7.1
-- Use rocm-rpm-macros
-
-* Sat Oct 7 2023 Tom Rix <trix@redhat.com> - 5.7.0-1
-- Update to 5.7
-- Use WIP rocm-rpm-macros
-- Convert to environent modules
-
-* Sun Oct 1 2023 Tom Rix <trix@redhat.com> - 5.6.0-2
-- Split the build into gpu families
-
-* Sat Sep 23 2023 Tom Rix <trix@redhat.com> - 5.6.0-1
-- Update to 5.6
-
-* Tue Jun 6 2023 Tom Rix <trix@redhat.com> - 5.5.1-1
+* Thu Nov 15 2023 Tom Rix <trix@redhat.com> - 5.7.1-1
 - Initial package
