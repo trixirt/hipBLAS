@@ -29,6 +29,7 @@ Source0:        %{url}/archive/refs/tags/rocm-%{rocm_version}.tar.gz#/%{upstream
 BuildRequires:  cmake
 BuildRequires:  clang-devel
 BuildRequires:  compiler-rt
+BuildRequires:  gcc-gfortran
 BuildRequires:  lld
 BuildRequires:  llvm-devel
 BuildRequires:  ninja-build
@@ -46,10 +47,8 @@ BuildRequires:  rocm-rpm-macros-modules
 %global _smp_mflags -j1
 
 BuildRequires:  gtest-devel
-BuildRequires:  blas-devel
-BuildRequires:  libomp-devel
-BuildRequires:  python3-pyyaml
-BuildRequires:  rocminfo
+BuildRequires:  blas-static
+BuildRequires:  lapack-static
 %endif
 
 Requires:       rocm-rpm-macros-modules
@@ -130,5 +129,5 @@ done
 %endif
 
 %changelog
-* Thu Nov 15 2023 Tom Rix <trix@redhat.com> - 5.7.1-1
+* Wed Nov 15 2023 Tom Rix <trix@redhat.com> - 5.7.1-1
 - Initial package
